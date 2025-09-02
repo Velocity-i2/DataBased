@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Business Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col font-sans">
+
+  <!-- Login Screen -->
+  <div id="loginScreen" class="flex items-center justify-center h-screen bg-gray-100">
+    <div class="bg-white shadow-lg rounded-xl p-6 w-80 text-center">
+      <h2 class="text-xl font-bold mb-4 text-gray-700">🔐 Admin Login</h2>
+      <input id="passwordInput" type="password" placeholder="Enter Password"
+             class="border rounded-lg px-3 py-2 w-full mb-4 focus:ring-2 focus:ring-blue-400">
+      <button onclick="checkPassword()" class="bg-blue-600 text-white px-4 py-2 rounded-lg w-full hover:bg-blue-700">
+        Login
+      </button>
+      <p id="errorMsg" class="text-red-600 mt-3 hidden">Incorrect password</p>
+    </div>
+  </div>
+
+  <!-- Dashboard -->
+  <div id="dashboard" class="hidden flex-1 flex-col">
+    <header class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 text-center text-2xl font-bold shadow-md">
+      📊 Business Dashboard
+    </header>
+
+    <!-- KPI Cards -->
+    <main class="flex-1 p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="bg-white rounded-xl shadow p-5 flex items-center gap-4">
+        <i data-lucide="trending-up" class="text-green-600"></i>
+        <div>
+          <h2 class="text-gray-500 text-sm">Income</h2>
+          <p id="income" class="text-2xl font-bold text-green-600">--</p>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow p-5 flex items-center gap-4">
+        <i data-lucide="trending-down" class="text-red-600"></i>
+        <div>
+          <h2 class="text-gray-500 text-sm">Expense</h2>
+          <p id="expense" class="text-2xl font-bold text-red-600">--</p>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow p-5 flex items-center gap-4">
+        <i data-lucide="wallet" class="text-blue-600"></i>
+        <div>
+          <h2 class="text-gray-500 text-sm">Balance</h2>
+          <p id="balance" class="text-2xl font-bold text-blue-600">--</p>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow p-5 flex items-center gap-4">
+        <i data-lucide="package" class="text-indigo-600"></i>
+        <div>
+          <h2 class="text-gray-500 text-sm">Total Orders</h2>
+          <p id="totalOrders" class="text-2xl font-bold text-indigo-600">--</p>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow p-5 flex items-center gap-4">
+        <i data-lucide="clock" class="text-yellow-600"></i>
+        <div>
+          <h2 class="text-gray-500 text-sm">Pending</h2>
+          <p id="pendingOrders" class="text-2xl font-bold text-yellow-600">--</p>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow p-5 flex items-center gap-4">
+        <i data-lucide="check-circle" class="text-green-700"></i>
+        <div>
+          <h2 class="text-gray-500 text-sm">Completed</h2>
+          <p id="completeOrders" class="text-2xl font-bold text-green-700">--</p>
+        </div>
+      </div>
+    </main>
+
+    <!-- Compact Orders Chart -->
+    <section class="p-6">
+      <div class="bg-white rounded-xl shadow p-6 flex flex-col items-center">
+        <h2 class="text-lg font-bold mb-4 text-gray-700">📦 Orders Overview</h2>
+        <div class="w-48 h-48">
+          <canvas id="ordersChart"></canvas>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // ========================
+    // CONFIG
+    // ========================
+    const ADMIN_PASSWORD = "123"; // change this
+    const SHEET_URL = "https://script.google.com/macros/s/AKfycby-6cXucfvtw6nnIimop9DY0avbtqoOKI8PNBXdX-LzEG-K_axuAq22mrFpvZdDZMZq/exec"; // replace with Apps Script URL
+
+    // ========================
+    // PASSWORD CHECK
+    // ========================
+    function checkPassword() {
+      const input = document.getElementById("passwordInput").value;
+      if (input === ADMIN_PASSWORD) {
+        document.getElementById("loginScreen").classList.add("hidden");
+        document.getElementById("dashboard").classList.remove("hidden");
+        lucide.createIcons();
+        fetchData();
+        // Auto-refresh every 1 min
+        setInterval(fetchData, 1000);
+      } else {
+        document.getElementById("errorMsg").classList.remove("hidden");
+      }
+    }
+
+    // ========================
+    // FETCH DATA
+    // ========================
+    async function fetchData() {
+      try {
+        const res = await fetch(SHEET_URL);
+        const data = await res.json();
+
+        // Update UI
+        document.getElementById("income").innerText = data.income;
+        document.getElementById("expense").innerText = data.expense;
+        document.getElementById("balance").innerText = data.balance;
+        document.getElementById("totalOrders").innerText = data.totalOrders;
+        document.getElementById("pendingOrders").innerText = data.pendingOrders;
+        document.getElementById("completeOrders").innerText = data.completeOrders;
+
+        // Chart
+        const ctx = document.getElementById("ordersChart");
+        if (window.ordersChart) window.ordersChart.destroy();
+        window.ordersChart = new Chart(ctx, {
+          type: "doughnut",
+          data: {
+            labels: ["Pending", "Completed"],
+            datasets: [{
+              data: [data.pendingOrders, data.completeOrders],
+              backgroundColor: ["#FACC15", "#22C55E"]
+            }]
+          },
+          options: { plugins: { legend: { position: "bottom" } } }
+        });
+
+      } catch (err) {
+        console.error("Error fetching data", err);
+      }
+    }
+  </script>
+</body>
+</html>
