@@ -9,18 +9,16 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body class="bg-gray-50 min-h-screen flex flex-col font-sans">
+<body class="bg-gray-100 min-h-screen flex flex-col">
 
-  <!-- Login Screen -->
-  <div id="loginScreen" class="flex items-center justify-center h-screen bg-gray-100">
-    <div class="bg-white shadow-lg rounded-xl p-6 w-80 text-center">
-      <h2 class="text-xl font-bold mb-4 text-gray-700">🔐 Admin Login</h2>
+  <!-- Password Gate -->
+  <div id="loginScreen" class="flex items-center justify-center h-screen bg-gray-200">
+    <div class="bg-white shadow-lg rounded-2xl p-6 w-80 text-center">
+      <h2 class="text-lg font-bold mb-4">Admin Login</h2>
       <input id="passwordInput" type="password" placeholder="Enter Password"
-             class="border rounded-lg px-3 py-2 w-full mb-4 focus:ring-2 focus:ring-blue-400">
-      <button onclick="checkPassword()" class="bg-blue-600 text-white px-4 py-2 rounded-lg w-full hover:bg-blue-700">
+             class="border rounded-lg px-3 py-2 w-full mb-4">
+      <button onclick="checkPassword()" class="bg-blue-600 text-white px-4 py-2 rounded-lg w-full">
         Login
       </button>
       <p id="errorMsg" class="text-red-600 mt-3 hidden">Incorrect password</p>
@@ -29,68 +27,55 @@
 
   <!-- Dashboard -->
   <div id="dashboard" class="hidden flex-1 flex-col">
-    <header class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 text-center text-2xl font-bold shadow-md">
-      📊 Business Dashboard
+    <header class="bg-blue-600 text-white p-4 text-center text-2xl font-bold shadow-md">
+      Business Dashboard
     </header>
 
-    <!-- KPI Cards -->
-    <main class="flex-1 p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div class="bg-white rounded-xl shadow p-5 flex items-center gap-4">
-        <i data-lucide="trending-up" class="text-green-600"></i>
-        <div>
-          <h2 class="text-gray-500 text-sm">Income</h2>
-          <p id="income" class="text-2xl font-bold text-green-600">--</p>
-        </div>
+    <main class="flex-1 p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-white rounded-2xl shadow p-6 text-center">
+        <h2 class="text-gray-500">Income</h2>
+        <p id="income" class="text-3xl font-bold text-green-600">--</p>
       </div>
 
-      <div class="bg-white rounded-xl shadow p-5 flex items-center gap-4">
-        <i data-lucide="trending-down" class="text-red-600"></i>
-        <div>
-          <h2 class="text-gray-500 text-sm">Expense</h2>
-          <p id="expense" class="text-2xl font-bold text-red-600">--</p>
-        </div>
+      <div class="bg-white rounded-2xl shadow p-6 text-center">
+        <h2 class="text-gray-500">Expense</h2>
+        <p id="expense" class="text-3xl font-bold text-red-600">--</p>
       </div>
 
-      <div class="bg-white rounded-xl shadow p-5 flex items-center gap-4">
-        <i data-lucide="wallet" class="text-blue-600"></i>
-        <div>
-          <h2 class="text-gray-500 text-sm">Balance</h2>
-          <p id="balance" class="text-2xl font-bold text-blue-600">--</p>
-        </div>
+      <div class="bg-white rounded-2xl shadow p-6 text-center">
+        <h2 class="text-gray-500">Current Balance</h2>
+        <p id="balance" class="text-3xl font-bold text-blue-600">--</p>
       </div>
 
-      <div class="bg-white rounded-xl shadow p-5 flex items-center gap-4">
-        <i data-lucide="package" class="text-indigo-600"></i>
-        <div>
-          <h2 class="text-gray-500 text-sm">Total Orders</h2>
-          <p id="totalOrders" class="text-2xl font-bold text-indigo-600">--</p>
-        </div>
+      <div class="bg-white rounded-2xl shadow p-6 text-center">
+        <h2 class="text-gray-500">Total Orders</h2>
+        <p id="totalOrders" class="text-3xl font-bold text-indigo-600">--</p>
       </div>
 
-      <div class="bg-white rounded-xl shadow p-5 flex items-center gap-4">
-        <i data-lucide="clock" class="text-yellow-600"></i>
-        <div>
-          <h2 class="text-gray-500 text-sm">Pending</h2>
-          <p id="pendingOrders" class="text-2xl font-bold text-yellow-600">--</p>
-        </div>
+      <div class="bg-white rounded-2xl shadow p-6 text-center">
+        <h2 class="text-gray-500">Pending Orders</h2>
+        <p id="pendingOrders" class="text-3xl font-bold text-yellow-600">--</p>
       </div>
 
-      <div class="bg-white rounded-xl shadow p-5 flex items-center gap-4">
-        <i data-lucide="check-circle" class="text-green-700"></i>
-        <div>
-          <h2 class="text-gray-500 text-sm">Completed</h2>
-          <p id="completeOrders" class="text-2xl font-bold text-green-700">--</p>
-        </div>
+      <div class="bg-white rounded-2xl shadow p-6 text-center">
+        <h2 class="text-gray-500">Complete Orders</h2>
+        <p id="completeOrders" class="text-3xl font-bold text-green-700">--</p>
       </div>
     </main>
 
-    <!-- Compact Orders Chart -->
-    <section class="p-6">
-      <div class="bg-white rounded-xl shadow p-6 flex flex-col items-center">
-        <h2 class="text-lg font-bold mb-4 text-gray-700">📦 Orders Overview</h2>
-        <div class="w-48 h-48">
-          <canvas id="ordersChart"></canvas>
-        </div>
+    <section class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Orders Overview -->
+      <div class="bg-white rounded-2xl shadow p-6 text-center flex flex-col items-center justify-center">
+  	<h2 class="text-lg font-bold mb-4">Orders Overview</h2>
+  	<div class="flex items-center justify-center">
+   	 <canvas id="ordersChart"></canvas>
+  	</div>
+	</div>
+
+      <!-- Income vs Expense -->
+      <div class="bg-white rounded-2xl shadow p-6 text-center">
+        <h2 class="text-lg font-bold mb-4">Income vs Expense</h2>
+        <canvas id="incomeChart"></canvas>
       </div>
     </section>
   </div>
@@ -99,8 +84,12 @@
     // ========================
     // CONFIG
     // ========================
-    const ADMIN_PASSWORD = "123"; // change this
-    const SHEET_URL = "https://script.google.com/macros/s/AKfycby-6cXucfvtw6nnIimop9DY0avbtqoOKI8PNBXdX-LzEG-K_axuAq22mrFpvZdDZMZq/exec"; // replace with Apps Script URL
+    const ADMIN_PASSWORD = "1"; // Change this
+    const SHEET_URL = "https://script.google.com/macros/s/AKfycby-6cXucfvtw6nnIimop9DY0avbtqoOKI8PNBXdX-LzEG-K_axuAq22mrFpvZdDZMZq/exec"; 
+
+    let ordersChart = null;
+    let incomeChart = null;
+    let lastData = null; // store previous dataset
 
     // ========================
     // PASSWORD CHECK
@@ -110,24 +99,29 @@
       if (input === ADMIN_PASSWORD) {
         document.getElementById("loginScreen").classList.add("hidden");
         document.getElementById("dashboard").classList.remove("hidden");
-        lucide.createIcons();
         fetchData();
-        // Auto-refresh every 1 min
-        setInterval(fetchData, 1000);
+        setInterval(fetchData, 1000); // check every 5s
       } else {
         document.getElementById("errorMsg").classList.remove("hidden");
       }
     }
 
+
     // ========================
-    // FETCH DATA
+    // FETCH DATA FROM GOOGLE SHEET
     // ========================
     async function fetchData() {
       try {
-        const res = await fetch(SHEET_URL);
-        const data = await res.json();
+        const response = await fetch(SHEET_URL);
+        const data = await response.json();
+	
+ 	// Only update if data changed
+        if (JSON.stringify(data) === JSON.stringify(lastData)) {
+          return; // no changes → skip
+        }
+        lastData = data;
 
-        // Update UI
+        // Update values
         document.getElementById("income").innerText = data.income;
         document.getElementById("expense").innerText = data.expense;
         document.getElementById("balance").innerText = data.balance;
@@ -135,19 +129,42 @@
         document.getElementById("pendingOrders").innerText = data.pendingOrders;
         document.getElementById("completeOrders").innerText = data.completeOrders;
 
-        // Chart
-        const ctx = document.getElementById("ordersChart");
-        if (window.ordersChart) window.ordersChart.destroy();
-        window.ordersChart = new Chart(ctx, {
+        // Orders Overview Chart
+        if (ordersChart) ordersChart.destroy();
+        const ordersCtx = document.getElementById("ordersChart");
+        ordersChart = new Chart(ordersCtx, {
           type: "doughnut",
           data: {
-            labels: ["Pending", "Completed"],
+            labels: ["Pending", "Complete"],
             datasets: [{
               data: [data.pendingOrders, data.completeOrders],
               backgroundColor: ["#FACC15", "#22C55E"]
             }]
           },
-          options: { plugins: { legend: { position: "bottom" } } }
+          options: {
+            plugins: { legend: { position: "bottom" } },
+            cutout: "70%",
+            responsive: false
+          }
+        });
+
+
+        // Income vs Expense Chart
+        if (incomeChart) incomeChart.destroy();
+        const incomeCtx = document.getElementById("incomeChart");
+        incomeChart = new Chart(incomeCtx, {
+          type: "bar",
+          data: {
+            labels: ["Income", "Expense"],
+            datasets: [{
+              data: [data.income, data.expense],
+              backgroundColor: ["#22C55E", "#EF4444"]
+            }]
+          },
+          options: {
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true } }
+          }
         });
 
       } catch (err) {
